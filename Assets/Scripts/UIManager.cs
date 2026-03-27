@@ -25,6 +25,8 @@ public class UIManager : MonoBehaviour
     [Header("剩余次数")]
     public TMP_Text remainingAttemptsText;
 
+    public TMP_Text testT;
+
     void Start()
     {
         Initialization();
@@ -32,6 +34,10 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
+        //测试用
+        //Vector2 currentPos = RotateModel.Instance.controls.UI.Position.ReadValue<Vector2>();
+        //testT.text = $"位置：{currentPos},startP:{RotateModel.Instance.inputStartPoint},bool:{RotateModel.Instance.isHold}";
+
         if (RotateModel.Instance.GetCurrentAngularVelocity() >= 6 || RotateModel.Instance.GetCurrentAngularVelocity() <= -6)
         {
             rotateSpeedText.text = 
@@ -61,9 +67,11 @@ public class UIManager : MonoBehaviour
     //结束检测
     private void CheckEnd()
     {
-        if (RotateModel.Instance.remainingAttempts == 0 && RotateModel.Instance.GetCurrentAngularVelocity() == 0)
+        if (RotateModel.Instance.remainingAttempts == 0 
+            && RotateModel.Instance.GetCurrentAngularVelocity() == 0)
         {
             endF.gameObject.SetActive(true);
+            RotateModel.Instance.SetIsCanGameStart(false);
         }
     }
 
@@ -100,7 +108,6 @@ public class UIManager : MonoBehaviour
     //重新开始的按钮事件
     private void OnRestart()
     {
-        RotateModel.Instance.SetIsCanGameStart(false);
         EventManager.Instance.TriggerEvent(GameEventType.GameStart);
         startB.gameObject.SetActive(true);
         endF.gameObject.SetActive(false);

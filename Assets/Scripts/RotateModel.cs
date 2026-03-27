@@ -49,6 +49,7 @@ public class RotateModel : Singleton<RotateModel>
     private const float MaxAngularVelocity = 21600f;
     private const float DragToVelocityFactor = 0.1f;
 
+
     void Awake()
     {
         controls = new CommonControls();
@@ -58,6 +59,7 @@ public class RotateModel : Singleton<RotateModel>
 
     private void Start()
     {
+        EventManager.Instance.AddListener(GameEventType.GameStart, Initialization);
         Initialization();
     }
 
@@ -70,7 +72,6 @@ public class RotateModel : Singleton<RotateModel>
 
     private void OnEnable()
     {
-        EventManager.Instance.AddListener(GameEventType.GameStart, Initialization);
         //启用并注册Tap事件,鼠标按下和抬起
         controls.UI.Enable();
         controls.UI.Tap.performed += OnTapStart;
@@ -98,6 +99,14 @@ public class RotateModel : Singleton<RotateModel>
 
         lastInputDelta = 0;
 
+    }
+    //鼠标或手指抬起触发事件
+    private void OnTapEnd(InputAction.CallbackContext context)
+    {
+        //（这段可以不要）
+        //float throwVelocity = currentAngularVelocity +(lastInputDelta / rotationSensitivity) * 360 * 0.1f;
+        //currentAngularVelocity = Mathf.Clamp(throwVelocity, -21600f, 21600f);
+
         if (isCanGameStart)
         {
             if (remainingAttempts <= 0)
@@ -110,13 +119,6 @@ public class RotateModel : Singleton<RotateModel>
             }
         }
     }
-    //鼠标或手指抬起触发事件
-    private void OnTapEnd(InputAction.CallbackContext context)
-    {
-        //（这段可以不要）
-        //float throwVelocity = currentAngularVelocity +(lastInputDelta / rotationSensitivity) * 360 * 0.1f;
-        //currentAngularVelocity = Mathf.Clamp(throwVelocity, -21600f, 21600f);
-    }
     #endregion
 
     //旋转方法
@@ -125,7 +127,7 @@ public class RotateModel : Singleton<RotateModel>
         //检测是否按下
         isHold = controls.UI.Tap.ReadValue<float>() > 0;
 
-        if (isHold)
+        if (isHold && remainingAttempts!=0)
         {
             //获取当前鼠标屏幕位置
             Vector2 currentInputPos = controls.UI.Position.ReadValue<Vector2>();
@@ -191,6 +193,7 @@ public class RotateModel : Singleton<RotateModel>
     }
 
     public float GetCurrentAngularVelocity() => currentAngularVelocity;
+    public bool GetIsRotate() => isRotate;
     public void SetIsCanGameStart(bool isStart)
     {
         isCanGameStart = isStart;
