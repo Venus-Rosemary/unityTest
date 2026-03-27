@@ -15,7 +15,7 @@ public class RotateModel : Singleton<RotateModel>
     public Transform modelTransform;
 
     [Header("旋转参数")]
-    [Tooltip("旋转灵敏度：鼠标移动多少像素对应360度旋转")]
+    [Tooltip("旋转灵敏度：移动多少像素对应(360度*优化系数)旋转")]
     public float rotationSensitivity = 5.0f;
     [Tooltip("摩擦力系数 (0 - 1)")]
     [Range(0.90f, 0.999f)]
@@ -173,8 +173,11 @@ public class RotateModel : Singleton<RotateModel>
             currentAngularVelocity *= friction;
 
             float deltaRotation = currentAngularVelocity * Time.deltaTime;
+            
+            //圈数计算
             totalAccumulatedAngle += Mathf.Abs(deltaRotation);
             rotationNumber = totalAccumulatedAngle / 360f;
+
             modelTransform.Rotate(0, 0, deltaRotation);
         }
         else

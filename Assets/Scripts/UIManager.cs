@@ -75,6 +75,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    //°´Å¥ÊÂ¼þ×¢²á
     private void OnEnable()
     {
         startButton.onClick.AddListener(OnGameStart);
